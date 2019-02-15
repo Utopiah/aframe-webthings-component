@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Setting primitive color from sensor value</title>
+    <meta name="description" content="Setting primitive color from sensor value">
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+  </head>
+<script>
+AFRAME.registerComponent('iot', {
+  init: function () {
+    this.tick = AFRAME.utils.throttleTick(this.tick, 500, this);
+  },
+  tick: function(t, dt){    
+    fetch('http://gateway.local:8080/things/http---localhost-58888-/properties/Color', {
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjlkMTcyMWFhLWNiOGUtNGIwMi04MTQyLWMyMTBlMjkyNzk3NSJ9.eyJjbGllbnRfaWQiOiJsb2NhbC10b2tlbiIsInJvbGUiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZSI6Ii90aGluZ3MvdmlydHVhbC10aGluZ3MtMjpyZWFkd3JpdGUgL3RoaW5ncy9odHRwLS0tbG9jYWxob3N0LTU4ODg4LTpyZWFkd3JpdGUiLCJpYXQiOjE1NDk3MjE4NTMsImlzcyI6Ik5vdCBzZXQuIn0.oUIJZzKhPpUfbjkes0KsseHQzzmPufnUcgIOYj-jsnUxdcqty3CSFeUcuH94LlTNl-NVxlJnnePhWYszLOppPA'
+      }
+    }).then(res => {
+      return res.json();
+    }).then(things => {
+      console.log(things);
+
+          this.el.setAttribute("color", things.Color);
+          //console.log('Checkout this JSON! ', out);
+    });
+  }
+ })
+  
+</script>  
+  <body>
+    <a-scene background="color: #ECECEC">
+      <a-box position="-1 0.5 -3" iot rotation="0 45 0" color="#4CC3D9" shadow></a-box>
+      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" shadow></a-sphere>
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
+    </a-scene>
+  </body>
+</html>

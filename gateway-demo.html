@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Reading sensor and activating actuator from XR</title>
+    <meta name="description" content="Reading sensor and activating actuator from XR">
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+    <script src="aframe-gateway-things-component.js"></script>
+  </head>
+<script>
+  
+</script>  
+  <body>
+    <a-scene background="color: #ECECEC">
+      
+      <a-entity position="-1 0.5 -3" gateway-interface></a-entity>
+      
+      <a-entity camera position="0 1.8 0" look-controls>
+        <a-entity cursor="fuse: true; fuseTimeout: 500"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: black; shader: flat">
+        </a-entity>
+      </a-entity>      
+      
+      <a-box position="-1 0.5 -3" iot-periodic-read-values rotation="0 45 0" color="#4CC3D9" shadow></a-box>
+      
+      <a-entity position="0 1 0">
+        <a-sphere iot-color-actuator position="-4 1.25 -5" radius="1.25" color="red" shadow></a-sphere>
+        <a-sphere iot-color-actuator position="0 4.25 -5" radius="1.25" color="green" shadow></a-sphere>
+        <a-sphere iot-color-actuator position="4 1.25 -5" radius="1.25" color="blue" shadow></a-sphere>
+      </a-entity>
+      
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
+      
+    </a-scene>
+  </body>
+</html>

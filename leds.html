@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Setting on/off LEDs from within XR</title>
+    <meta name="description" content="Setting on/off LEDs from within XR">
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+  </head>
+<script>
+var token = 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjhkY2UwZWY4LTM3OTgtNDI4MC1hNDRlLTA5ODQzY2ZiYjNiZiJ9.eyJjbGllbnRfaWQiOiJsb2NhbC10b2tlbiIsInJvbGUiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZSI6Ii90aGluZ3M6cmVhZHdyaXRlIiwiaWF0IjoxNTQ5OTYxMDcwLCJpc3MiOiJodHRwczovL3Nvc2cubW96aWxsYS1pb3Qub3JnIn0.FHcrBxVZA4ZlozK08p5W2tBI_t0dYdGXtDL3Z8ITmBwWfocsypD5gkseDLDMWKKRGf5gkd55q9RY8_5MiApYXg'
+
+var leds = {
+  blue: {
+    url: 'https://sosg.mozilla-iot.org/things/gpio-13/properties/on',
+    properties: [{ on: false}]
+  },
+  green: {
+    url: 'https://sosg.mozilla-iot.org/things/gpio-19/properties/on',
+    properties: [{ on: false }]
+  },
+  red: {
+    url: 'https://sosg.mozilla-iot.org/things/gpio-26/properties/on',
+    properties: [{ on: false }]
+  }
+};
+
+var colorUrl = 'https://sosg.mozilla-iot.org/things/http---localhost-58888-';
+
+AFRAME.registerComponent('iot', {
+  init: function () {
+    this.tick = AFRAME.utils.throttleTick(this.tick, 500, this);
+  },
+  tick: function(t, dt){    
+    fetch(colorUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: token
+      }
+    }).then(res => {
+      return res.json();
+    }).then(things => {
+      //console.log(things);
+
+      this.el.setAttribute("color", things.Color);
+      //console.log('Checkout this JSON! ', out);
+    });
+  }
+ })
+  
+AFRAME.registerComponent('cursor-listener', {
+  init: function () {
+    var el = this.el
+    var myColor, endpoint
+    this.el.addEventListener('click', function (evt) {
+      myColor = el.getAttribute('color').replace(/\b\w/g, l => l.toLowerCase())
+      console.log('color', myColor );
+      let led = leds[myColor];
+      led.properties[0].on = ! led.properties[0].on;
+      fetch(led.url, {
+        method: "PUT", 
+        headers: {
+          Accept: 'application/json', // required!
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
+        body: JSON.stringify(led.properties[0])
+      }).then(res => {
+        console.log(res);
+        return res.json();
+      }).then(things => {
+        console.log(things);
+
+        //this.el.setAttribute("color", things.Color);
+        //console.log('Checkout this JSON! ', out);
+      });
+
+    });
+  }
+});  
+</script>  
+  <body>
+    <a-scene background="color: #ECECEC">
+      
+<a-entity camera position="0 1.8 0" look-controls>
+  <a-entity cursor="fuse: true; fuseTimeout: 500"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+            material="color: black; shader: flat">
+  </a-entity>
+</a-entity>      
+      
+      <a-box position="-1 0.5 -3" stopiot rotation="0 45 0" color="#4CC3D9" shadow></a-box>
+      <a-sphere cursor-listener position="-4 1.25 -5" radius="1.25" color="red" shadow></a-sphere>
+      <a-sphere cursor-listener position="0 4.25 -5" radius="1.25" color="green" shadow></a-sphere>
+      <a-sphere cursor-listener position="4 1.25 -5" radius="1.25" color="blue" shadow></a-sphere>
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
+    </a-scene>
+  </body>
+</html>

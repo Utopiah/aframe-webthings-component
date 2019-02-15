@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello, WebVR! • A-Frame</title>
+    <meta name="description" content="Hello, WebVR! • A-Frame">
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+  </head>
+<script>
+  
+let token = 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjhkY2UwZWY4LTM3OTgtNDI4MC1hNDRlLTA5ODQzY2ZiYjNiZiJ9.eyJjbGllbnRfaWQiOiJsb2NhbC10b2tlbiIsInJvbGUiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZSI6Ii90aGluZ3M6cmVhZHdyaXRlIiwiaWF0IjoxNTQ5OTYxMDcwLCJpc3MiOiJodHRwczovL3Nvc2cubW96aWxsYS1pb3Qub3JnIn0.FHcrBxVZA4ZlozK08p5W2tBI_t0dYdGXtDL3Z8ITmBwWfocsypD5gkseDLDMWKKRGf5gkd55q9RY8_5MiApYXg';
+let colorUrl = 'https://sosg.mozilla-iot.org/things/http---localhost-58888-/properties/Color';
+
+  
+AFRAME.registerComponent('iot', {
+  init: function () {
+    this.tick = AFRAME.utils.throttleTick(this.tick, 500, this);
+  },
+  tick: function(t, dt){
+    //console.log(this.el)
+    fetch(colorUrl, 
+    { headers: {
+        Accept: 'application/json',
+        Authorization: token}
+    })
+    .then(res => res.json())
+    .then((out) => {
+      this.el.setAttribute("color", out.Color);
+      //console.log('Checkout this JSON! ', out);
+    })
+    .catch(err => { throw err }); 
+  }
+ })
+  
+</script>  
+  <body>
+    <a-scene background="color: #ECECEC">
+      <a-box position="-1 0.5 -3" iot rotation="0 45 0" color="#4CC3D9" shadow></a-box>
+      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" shadow></a-sphere>
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
+    </a-scene>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Running on MagicLeap ML1</title>
+    <meta name="description" content="Running on MagicLeap ML1">
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+  </head>
+<script>
+
+var token = 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjhkY2UwZWY4LTM3OTgtNDI4MC1hNDRlLTA5ODQzY2ZiYjNiZiJ9.eyJjbGllbnRfaWQiOiJsb2NhbC10b2tlbiIsInJvbGUiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZSI6Ii90aGluZ3M6cmVhZHdyaXRlIiwiaWF0IjoxNTQ5OTYxMDcwLCJpc3MiOiJodHRwczovL3Nvc2cubW96aWxsYS1pb3Qub3JnIn0.FHcrBxVZA4ZlozK08p5W2tBI_t0dYdGXtDL3Z8ITmBwWfocsypD5gkseDLDMWKKRGf5gkd55q9RY8_5MiApYXg'
+var baseURL = 'https://sosg.mozilla-iot.org/'
+  
+var blueLED_URL = 'https://sosg.mozilla-iot.org/things/gpio-13'
+var greenLED_URL = 'https://sosg.mozilla-iot.org/things/gpio-19'
+  
+AFRAME.registerComponent('iot', {
+  init: function () {
+    this.tick = AFRAME.utils.throttleTick(this.tick, 500, this);
+  },
+  tick: function(t, dt){    
+    fetch(baseURL + 'things/0/properties/level', {
+      headers: {
+        Accept: 'application/json',
+        Authorization: token
+      }
+    }).then(res => {
+      console.log("res", res);
+      return res.json();
+    }).then(things => {
+      console.log("level", things.level);
+      this.el.setAttribute("text", "value", Math.round(things.level) );
+      document.querySelector("#sensormoving").setAttribute("height", Math.round(things.level) / 100 )
+    });
+  }
+ })
+  
+</script>  
+  <body>
+    <a-scene>
+      <a-entity rotation="0 -90 0" position="0 1.5 -1" scale="0.2 0.2 0.2">
+        <!-- could instead be auto generated from the device listing schema -->
+        <a-sphere position="11 0 -5" radius="1.5" color="white" opacity="0.2" shadow></a-sphere>
+        <a-sphere position="11 0 -5" radius="1.4" color="lightblue" shadow></a-sphere>
+
+        <a-sphere position="7 0 -5" radius="1.5" color="white" opacity="0.2" shadow></a-sphere>      
+        <a-sphere position="7 0 -5" radius="1.4" color="lightblue" shadow></a-sphere>      
+        <a-box position="6 0 -3" rotation="0 45 0" color="blue" shadow></a-box>
+
+        <a-sphere position="3 0 -5" radius="1.5" color="white" opacity="0.2" shadow></a-sphere>      
+        <a-sphere position="3 0 -5" radius="1.4" color="lightblue" shadow></a-sphere>     
+
+        <a-sphere position="-1 0 -5" radius="1.5" color="white" opacity="0.2" shadow></a-sphere>
+        <a-sphere position="-1 0 -5" radius="1.4" color="lightblue" shadow></a-sphere>
+
+        <a-sphere position="-5 0 -5" radius="1.5" color="white" opacity="0.2" shadow></a-sphere>
+        <a-sphere position="-5 0 -5" radius="1.4" color="lightblue" shadow></a-sphere>
+        <a-entity rotation="0 45 0" position="0 0 -3">
+          <a-entity scale="5 5 5"
+                    text="value: Ambient Light\nSensor;"
+                    position="-2 0.5 -3"></a-entity>
+          <a-entity scale="10 10 10"
+                    text="value: loading;"
+                    iot position="0 0 -3"></a-entity>
+        </a-entity>
+
+        <a-cylinder id="sensormoving" position="-5 1.5 -5" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>

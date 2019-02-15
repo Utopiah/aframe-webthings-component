@@ -1,4 +1,6 @@
-# A-Frame Project
+Behind repositories. For the moment see https://github.com/SamsungInternet/webthings-webapp/tree/aframe/master for the latest version.
+
+# A-Frame component to get real world data from Mozilla gateway things
 
 State of the art?
 - https://github.com/search?q=aframe+gateway

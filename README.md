@@ -1,4 +1,6 @@
-Behind repositories. For the moment see https://github.com/SamsungInternet/webthings-webapp/tree/aframe/master for the latest version.
+Behind repository. For the moment see https://github.com/SamsungInternet/webthings-webapp/tree/aframe/master for the latest version.
+
+Not for used but as a reminder that abstraction toward a standard A-Frame component will be required in the future.
 
 # A-Frame component to get real world data from Mozilla gateway things
 
